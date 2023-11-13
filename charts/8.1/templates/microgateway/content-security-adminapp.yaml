@@ -1,0 +1,15 @@
+{{ if .Values.microgateway.enabled }}
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: ContentSecurity
+metadata:
+  name: adminapp-content-security
+spec:
+  parserRef:
+    name: iam-parser
+  limitsRef:
+    name: iam-limits
+  filter:
+    denyRulesRef:
+      name: adminapp-deny-rules
+
+{{ end }}

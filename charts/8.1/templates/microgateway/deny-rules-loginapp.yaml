@@ -1,0 +1,1306 @@
+{{ if .Values.microgateway.enabled }}
+---
+apiVersion: "microgateway.airlock.com/v1alpha1"
+kind: "DenyRules"
+metadata:
+  name: "loginapp-deny-rules"
+spec:
+  request:
+    builtIn:
+      settings:
+        level: "Standard"
+        threatHandlingMode: "Block"
+      exceptions:
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:state|nonce)$"
+                ignoreCase: false
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/oauth2.*"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:code|state)$"
+                ignoreCase: false
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/oauth2-client(?:/.*)?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.context"
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/protected/my/tokens/cronto/devices/activation/complete/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "^[a-zA-Z0-9_\\-]*$"
+                ignoreCase: false
+            jsonPath: "$.publicKeyCredential.id"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/protected/self-service/fido/registration/attestation-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "^[a-zA-Z0-9_\\-]*$"
+                ignoreCase: false
+            jsonPath: "$.publicKeyCredential.response.attestationObject"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/protected/self-service/fido/registration/attestation-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.context"
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/protected/my/tokens/mtan/[a-zA-Z0-9]+/verify-number-change/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.data.attributes.publicJwk"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/protected/my/tokens/device-tokens/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "^[a-zA-Z0-9_\\-]*$"
+                ignoreCase: false
+            jsonPath: "$.publicKeyCredential.id"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/protected/self-service/fido/registration/attestation-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "^[a-zA-Z0-9_\\-]*$"
+                ignoreCase: false
+            jsonPath: "$.publicKeyCredential.response.attestationObject"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/protected/self-service/fido/registration/attestation-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.consentToken"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/oauth2/authorization-server/consent/remote/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "^[a-zA-Z0-9_\\-]*$"
+                ignoreCase: false
+            jsonPath: "$.publicKeyCredential.id"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/registration/attestation-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "^[a-zA-Z0-9_\\-]*$"
+                ignoreCase: false
+            jsonPath: "$.publicKeyCredential.response.attestationObject"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/registration/attestation-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "^[a-zA-Z0-9_\\-]*$"
+                ignoreCase: false
+            jsonPath: "$.publicKeyCredential.id"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/assertion-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "^[a-zA-Z0-9_\\-]*$"
+                ignoreCase: false
+            jsonPath: "$.publicKeyCredential.response.userHandle"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/assertion-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "^[a-zA-Z0-9_\\-]*$"
+                ignoreCase: false
+            jsonPath: "$.publicKeyCredential.response.signature"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/assertion-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "^[a-zA-Z0-9_\\-]*$"
+                ignoreCase: false
+            jsonPath: "$.publicKeyCredential.response.authenticatorData"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/assertion-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.jwt"
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/(public/authentication|protected/self-service)/device-token/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:sso|ticket|representation)$"
+                ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:Signature|SAMLRequest|SAMLResponse|RelayState|SAMLart)$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/(?:SSORedirect|SSOPOST|ArtifactResolver|IDPSloRedirect|SPAcs|SPSloResponder)(/.*)?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:Signature|SAMLRequest|SAMLResponse|RelayState|SAMLart)$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/saml2/idp/(?:sso/metaAlias/.+|slo/metaAlias/.+)$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:Signature|SAMLRequest|SAMLResponse|RelayState|SAMLart)$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/saml2/sp/(?:sso/metaAlias/.+|slo/metaAlias/.+)$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^sessionIdToDelete$"
+                ignoreCase: false
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/oauth2-manage/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^STATE_PARAMETER$"
+                ignoreCase: false
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/account-registration-confirmation/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^subject_token$"
+                ignoreCase: false
+            value:
+              matcher:
+                regex: "^[a-zA-Z0-9_.\\-]*$"
+                ignoreCase: false
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/oauth2/authorization-servers/[a-zA-Z0-9._\\-]+/token/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          header:
+            name:
+              matcher:
+                regex: "^X-IAM-SSO-Ticket$"
+            value:
+              matcher:
+                regex: "^[a-zA-Z0-9_.\\-]+$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/(?:location|default-application|applications/[a-z0-9_\\-]+)/access/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          header:
+            name:
+              matcher:
+                regex: "^X-Captcha-Solution$"
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:sso|ticket|representation)$"
+                ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^Location$"
+                ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^filter$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/(?:public|protected)/"
+              ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^error_description$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/oauth2-client(?:/.*)?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:Signature|SAMLRequest|SAMLResponse|RelayState|SAMLart)$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/(?:SSORedirect|SSOPOST|ArtifactResolver|IDPSloRedirect|SPAcs|SPSloResponder)(/.*)?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:Signature|SAMLRequest|SAMLResponse|RelayState|SAMLart)$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/saml2/idp/(?:sso/metaAlias/.+|slo/metaAlias/.+)$"
+              ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:Signature|SAMLRequest|SAMLResponse|RelayState|SAMLart)$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/saml2/sp/(?:sso/metaAlias/.+|slo/metaAlias/.+)$"
+              ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^LINK[a-zA-Z0-9]+$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/account-link-management/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^filter$"
+                ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.publicKeyCredential.response.clientDataJSON"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/protected/self-service/fido/registration/attestation-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.queryString"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/protected/self-service/oauth2/client/authorization/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.location"
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/location/(access|interpret)/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.publicKeyCredential.response.clientDataJSON"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/assertion-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.publicKeyCredential.response.clientDataJSON"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/registration/attestation-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.queryString"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/oauth2/client/authorization/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.queryString"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/oauth2/authorization-servers/[a-zA-Z0-9._\\-]+/authorize/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^Location$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/ui/configuration/logout/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "TEMPLATE"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "HTML"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "HTML"
+        blockedData:
+          header:
+            name:
+              matcher:
+                regex: "^Signature$"
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/log(?:in|out)-oneshot/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "UNIXCMD"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "UNIXCMD"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:sso|ticket|representation)$"
+                ignoreCase: false
+      - ruleKeys:
+        - "UNIXCMD"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^Location$"
+                ignoreCase: false
+      - ruleKeys:
+        - "UNIXCMD"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:Signature|SAMLRequest|SAMLResponse|RelayState|SAMLart)$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/(?:SSORedirect|SSOPOST|ArtifactResolver|IDPSloRedirect|SPAcs|SPSloResponder)(/.*)?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "UNIXCMD"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:Signature|SAMLRequest|SAMLResponse|RelayState|SAMLart)$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/saml2/idp/(?:sso/metaAlias/.+|slo/metaAlias/.+)$"
+              ignoreCase: false
+      - ruleKeys:
+        - "UNIXCMD"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:Signature|SAMLRequest|SAMLResponse|RelayState|SAMLart)$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/saml2/sp/(?:sso/metaAlias/.+|slo/metaAlias/.+)$"
+              ignoreCase: false
+      - ruleKeys:
+        - "WINCMD"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "WINCMD"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:sso|ticket|representation)$"
+                ignoreCase: false
+      - ruleKeys:
+        - "LDAP"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:Signature|SAMLRequest|SAMLResponse|RelayState|SAMLart)$"
+                ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:state|nonce)$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/oauth2.*"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:code|state)$"
+                ignoreCase: false
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/oauth2-client(?:/.*)?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:sso|ticket|representation)$"
+                ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.location"
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/location/(access|interpret)/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^Location$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/ui/configuration/logout/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.data.attributes.publicJwk"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/protected/my/tokens/device-tokens/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.publicKeyCredential.response.clientDataJSON"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/protected/self-service/fido/registration/attestation-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.queryString"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/protected/self-service/oauth2/client/authorization/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.consentToken"
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/oauth2/authorization-server/consent/remote/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.publicKeyCredential.id"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/registration/attestation-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.publicKeyCredential.response.attestationObject"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/registration/attestation-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.publicKeyCredential.id"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/assertion-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.publicKeyCredential.response.userHandle"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/assertion-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.publicKeyCredential.response.signature"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/assertion-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.publicKeyCredential.response.authenticatorData"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/assertion-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.jwt"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/(public/authentication|protected/self-service)/device-token/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.publicKeyCredential.response.clientDataJSON"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/assertion-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.publicKeyCredential.response.clientDataJSON"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/fido/registration/attestation-response/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.queryString"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/oauth2/client/authorization/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.queryString"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/oauth2/authorization-servers/[a-zA-Z0-9._\\-]+/authorize/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^Location$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/saml2/idp/slo/init$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^Location$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/ui/app/.*"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^Location$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/saml2/sp/slo/init$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^redirect_uri$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/oauth2/v3/[a-zA-Z0-9._\\-]+/authorize"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^redirect_uri$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/oauth2/authorization-servers/[a-zA-Z0-9._\\-]+/token/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^redirect_uri$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/ui/app/auth/oauth2/authorization-servers/[a-zA-Z0-9._\\-]+/authorize"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^Location$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/ui/app/[a-z0-9_\\-]+/logout$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^target$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/ui/app/protected/representation/(start|resume)$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^Location$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login(?:/check-login|/login|/logout)?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.targetLocation"
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/protected/self-service/representation/start/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "SANITY"
+        blockedData:
+          header:
+            name:
+              matcher:
+                regex: "^Signature$"
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/log(?:in|out)-oneshot/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "ENCODING"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:sso|ticket|representation)$"
+                ignoreCase: false
+      - ruleKeys:
+        - "ENCODING"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "HPP"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^Location$"
+                ignoreCase: false
+            value:
+              matcher:
+                regex: "/representation/start"
+                ignoreCase: false
+      - ruleKeys:
+        - "HPP"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "HPP"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.queryString"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/protected/self-service/oauth2/client/authorization/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "HPP"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^Location$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/ui/configuration/logout/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "HPP"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.location"
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/location/(access|interpret)/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "HPP"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.queryString"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/oauth2/client/authorization/check/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "HPP"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.queryString"
+        requestConditions:
+          method: []
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/rest/public/authentication/oauth2/authorization-servers/[a-zA-Z0-9._\\-]+/authorize/?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "HPP"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:sso|ticket|representation)$"
+                ignoreCase: false
+      - ruleKeys:
+        - "HPP"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^Location$"
+                ignoreCase: false
+      - ruleKeys:
+        - "HPP"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:Signature|SAMLRequest|SAMLResponse|RelayState|SAMLart)$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/(?:SSORedirect|SSOPOST|ArtifactResolver|IDPSloRedirect|SPAcs|SPSloResponder)(/.*)?$"
+              ignoreCase: false
+      - ruleKeys:
+        - "HPP"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:Signature|SAMLRequest|SAMLResponse|RelayState|SAMLart)$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/saml2/idp/(?:sso/metaAlias/.+|slo/metaAlias/.+)$"
+              ignoreCase: false
+      - ruleKeys:
+        - "HPP"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^(?:Signature|SAMLRequest|SAMLResponse|RelayState|SAMLart)$"
+                ignoreCase: false
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-login/saml2/sp/(?:sso/metaAlias/.+|slo/metaAlias/.+)$"
+              ignoreCase: false
+
+{{ end }}

@@ -1,0 +1,82 @@
+
+## @section Airlock IAM parameters
+
+##  @param enableIamResources: True if the IAM resource should be included.
+##
+enableIamResources: true
+
+## Image Options
+##
+image:
+  ## @param image.repository: Repository to retrieve the Airlock IAM image from.
+  ##
+  repository: hub.docker.com/repository/docker/ergon/airlock-iam
+  ## @param image.tag: Tag that uniquely identifies the image.
+  ##
+  tag: 8.1
+  ## @param image.pullPolicy: When to pull the image.
+  ##
+  pullPolicy: IfNotPresent
+## @param instanceName: What name the IAM instance should have.
+## This is reflected in the module path, e.g. "/<instanceName>-admin/"
+##
+instanceName: auth
+## @param env: Environment variables passed into the Airlock IAM container.
+## This allows overriding any options defined in the instance properties, as well as to adjust Java settings.
+##
+env:
+  IAM_MODULES: adminapp,loginapp,transaction-approval,api-policy-service,service-container
+
+
+## @section Kubernetes Parameters
+
+## @param namespace: The namespace under which Airlock IAM will be deployed.
+##
+namespace: airlock-iam
+## Resource Options
+##
+resourceOptions:
+  ## @param resourceOptions.cpus: CPUs requested for the IAM pod.
+  ##
+  cpus: 1
+  ## @param resourceOptions.memory: Memory limit for the IAM pod.
+  ##
+  memory: 4Gi
+  ## @param resourceOptions.logsStorageSize: Disk space requested for the persistent volume claim used for the IAM Logs.
+  ## If set to "nil", no persistent volume claim will be created.
+  ##
+  logsStorageSize: nil
+## @param restartPolicy: Restart policy for the Airlock IAM deployment.
+##
+restartPolicy: Always
+## @param service.type: Type of the service that exposes IAM.
+##
+service:
+  type: NodePort
+
+
+## @section Airlock Microgateway Parameters
+## Configuration of the Airlock Microgateway, that protects Airlock IAM.
+##
+microgateway:
+  ## @param microgateway.enabled: If true, will inject Airlock Microgateway as a sidecar to Airlock IAM.
+  ##
+  enabled: true
+  ## @param microgateway.certificate:
+  ##
+  certificate:
+    ## @param microgateway.certificate.secretName: Identifier of the certificate secret
+    ##
+    secretName: "airlock-iam-service-downstream-cert"
+    ## @param microgateway.certificate.issuerName: Name of the issuer of the secret. Default is self-signed.
+    ##
+    issuerName: "selfsigned-issuer"
+    ## @param microgateway.certificate.commonName:
+    ##
+    commonName: ""
+    ## @param microgateway.certificate.dnsNames:
+    ##
+    dnsNames: [ ]
+  ## @param microgateway.unsecuredPaths: A list of URL paths that should not be protected by Airlock Microgateway
+  ##
+  unsecuredPaths: [ ]

@@ -1,0 +1,23 @@
+{{ if .Values.microgateway.enabled }}
+---
+apiVersion: "microgateway.airlock.com/v1alpha1"
+kind: "DenyRules"
+metadata:
+  name: "transaction-approval-deny-rules"
+spec:
+  request:
+    builtIn:
+      settings:
+        level: "Standard"
+        threatHandlingMode: "Block"
+      exceptions:
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          parameter:
+            name:
+              matcher:
+                regex: "^filter$"
+                ignoreCase: false
+
+{{ end }}

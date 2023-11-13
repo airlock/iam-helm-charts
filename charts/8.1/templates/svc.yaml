@@ -1,0 +1,19 @@
+{{ if .Values.enableIamResources }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: iam
+  namespace: {{ quote .Values.namespace }}
+  labels:
+    app: iam
+spec:
+  selector:
+    app: iam
+  type: {{ quote .Values.service.type }}
+  ports:
+    - port: 8443
+      protocol: TCP
+      targetPort: iam-https-port
+
+{{ end }}

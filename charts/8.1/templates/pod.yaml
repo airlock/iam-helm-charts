@@ -1,0 +1,55 @@
+{{ if .Values.enableIamResources }}
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: iam
+  namespace: {{ quote .Values.namespace }}
+  labels:
+    app: iam
+{{ if .Values.microgateway.enabled }}
+  annotations:
+    sidecar.microgateway.airlock.com/inject: "true"
+{{ end }}
+spec:
+  securityContext:
+    runAsUser: 1000
+    fsGroup: 1000
+  containers:
+    - name: iam
+      image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+      imagePullPolicy: {{ quote .Values.image.pullPolicy }}
+      ports:
+        - containerPort: 8443
+          name: iam-https-port
+      volumeMounts:
+        - mountPath: /home/airlock/work
+          name: iam-workspace
+      {{ if .Values.resourceOptions.logsStorageSize }}
+        - mountPath: /home/airlock/iam/instances/{{ .Values.instanceName }}/logs
+          name: iam-logs
+      {{ end }}
+      {{ if .Values.env }}
+      env:
+      {{- range $name, $value := .Values.env }}
+        - name: {{ quote $name }}
+          value: {{ quote $value }}
+      {{- end }}
+      {{ end }}
+      resources:
+        limits:
+          memory: {{ quote .Values.resourceOptions.memory }}
+        requests:
+          memory: {{ quote .Values.resourceOptions.memory }}
+          cpu: {{ quote .Values.resourceOptions.cpus }}
+  restartPolicy: {{ quote .Values.restartPolicy }}
+  volumes:
+    - name: iam-workspace
+      emptyDir: { }
+    {{ if .Values.resourceOptions.logsStorageSize }}
+    - name: iam-logs
+      persistentVolumeClaim:
+        claimName: iam-logs
+    {{ end }}
+
+  {{ end }}

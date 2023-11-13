@@ -1,0 +1,9 @@
+{{ if .Values.microgateway.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ .Values.microgateway.certificate.issuerName }}
+spec:
+  selfSigned: { }
+
+{{ end }}

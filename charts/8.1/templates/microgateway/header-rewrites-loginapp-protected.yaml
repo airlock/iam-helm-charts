@@ -1,0 +1,31 @@
+{{ if .Values.microgateway.enabled }}
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: HeaderRewrites
+metadata:
+  name: iam-loginapp-rest-protected-header-rewrites
+spec:
+  request:
+    allow:
+      matchingHeaders:
+        custom:
+          - headers:
+              - name:
+                  matcher:
+                    exact: "X-Captcha-Solution"
+            name: "CAPTCHA solution Header"
+          - headers:
+              - name:
+                  matcher:
+                    exact: "X-Continue-Flow"
+            name: "Continue flow header"
+          - headers:
+              - name:
+                  matcher:
+                    exact: "X-Flow-Continuation-Token"
+            name: "Flow continuation header"
+          - headers:
+              - name:
+                  matcher:
+                    exact: "X-Iam-Sso-Ticket"
+            name: "SSO Ticket header"
+{{ end }}

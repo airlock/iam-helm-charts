@@ -1,0 +1,17 @@
+{{ if .Values.microgateway.enabled }}
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: ContentSecurity
+metadata:
+  name: loginapp-rest-public-content-security
+spec:
+  parserRef:
+    name: iam-parser
+  limitsRef:
+    name: iam-limits
+  filter:
+    denyRulesRef:
+      name: loginapp-rest-public-deny-rules
+  headerRewritesRef:
+    name: iam-loginapp-rest-public-header-rewrites
+
+{{ end }}

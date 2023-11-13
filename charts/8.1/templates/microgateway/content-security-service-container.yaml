@@ -1,0 +1,17 @@
+{{ if .Values.microgateway.enabled }}
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: ContentSecurity
+metadata:
+  name: service-container-content-security
+spec:
+  parserRef:
+    name: iam-parser
+  limitsRef:
+    name: iam-limits
+  headerRewritesRef:
+    name: iam-servicecontainer-header-rewrites
+  filter:
+    denyRulesRef:
+      name: servicecontainer-deny-rules
+
+{{ end }}

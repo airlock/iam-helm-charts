@@ -1,0 +1,13 @@
+{{ if .Values.microgateway.enabled }}
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: ContentSecurity
+metadata:
+  name: unspecified-path-content-security
+spec:
+  filter:
+    denyRulesRef:
+      name: unspecified-path-deny-rule
+  headerRewritesRef:
+    name: unspecified-path-header-rewrites
+
+{{ end }}

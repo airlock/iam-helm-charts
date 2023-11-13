@@ -1,0 +1,16 @@
+{{ if .Values.microgateway.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.microgateway.certificate.secretName }}
+spec:
+  secretName: {{ .Values.microgateway.certificate.secretName }}
+  {{ if .Values.microgateway.certificate.commonName }}
+  commonName: {{ quote .Values.microgateway.certificate.commonName }}
+  {{ end }}
+  dnsNames: {{ .Values.microgateway.certificate.dnsNames | toYaml | nindent 4 }}
+  issuerRef:
+    kind: Issuer
+    name: {{ .Values.microgateway.certificate.issuerName  }}
+
+{{ end }}

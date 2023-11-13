@@ -1,0 +1,13 @@
+{{ if and .Values.enableIamResources .Values.resourceOptions.logsStorageSize }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: iam-logs
+  namespace: {{ quote .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ quote .Values.resourceOptions.logsStorageSize }}
+{{ end }}

@@ -1,0 +1,25 @@
+{{ if .Values.microgateway.enabled }}
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: Limits
+metadata:
+  name: iam-limits
+spec:
+  settings:
+    threatHandlingMode: Block
+  request:
+    limited:
+      general:
+        bodySize: "100Mi"
+        pathLength: "1Ki"
+      parameter:
+        count: 256
+        nameLength: "128"
+        valueLength: "10Ki"
+      json:
+        nestingDepth: 100
+        keyCount: 250
+        elementCount: 150000
+        keyLength: "256"
+        valueLength: "8Ki"
+
+{{ end }}

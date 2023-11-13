@@ -1,0 +1,108 @@
+{{ if .Values.microgateway.enabled }}
+---
+apiVersion: "microgateway.airlock.com/v1alpha1"
+kind: "DenyRules"
+metadata:
+  name: "adminapp-deny-rules"
+spec:
+  request:
+    builtIn:
+      settings:
+        level: "Standard"
+        threatHandlingMode: "Block"
+      exceptions:
+      - ruleKeys:
+        - "SQL"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "XSS"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "TEMPLATE"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "HTML"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "HTML"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$.data.attributes.translations.*"
+        requestConditions:
+          path:
+            matcher:
+              regex: "^/{{.Values.instanceName}}-admin/rest/maintenance-messages.*"
+              ignoreCase: false
+      - ruleKeys:
+        - "UNIXCMD"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "WINCMD"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "LDAP"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "IDOR"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "ENCODING"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+      - ruleKeys:
+        - "HPP"
+        blockedData:
+          json:
+            value:
+              matcher:
+                regex: "(.|\n)*"
+            jsonPath: "$['password','oldPassword','newPassword']"
+
+{{ end }}

@@ -1,0 +1,61 @@
+{{ if .Values.microgateway.enabled }}
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: SidecarGateway
+metadata:
+  name: iam-sidecargateway
+spec:
+  podSelector:
+    matchLabels:
+      app: iam
+  applications:
+    - containerPort: 8443
+      envoyHTTPFilterRefs:
+        prepend:
+          - name: iam-http-filter-secure-cookie-rewrite
+      routes:
+        - pathPrefix: /{{ .Values.instanceName }}-admin/editConfig
+          secured:
+            contentSecurityRef:
+              name: adminapp-config-editor-content-security
+        - pathPrefix: /{{ .Values.instanceName }}-admin
+          secured:
+            contentSecurityRef:
+              name: adminapp-content-security
+        - pathPrefix: /{{ .Values.instanceName }}-servicecontainer
+          secured:
+            contentSecurityRef:
+              name: service-container-content-security
+        - pathPrefix: /{{ .Values.instanceName }}-login
+          secured:
+            contentSecurityRef:
+              name: loginapp-content-security
+        - pathPrefix: /{{ .Values.instanceName }}-login/rest/protected
+          secured:
+            contentSecurityRef:
+              name: loginapp-rest-protected-content-security
+        - pathPrefix: /{{ .Values.instanceName }}-login/rest/public
+          secured:
+            contentSecurityRef:
+              name: loginapp-rest-public-content-security
+        - pathPrefix: /{{ .Values.instanceName }}-transaction-approval/rest
+          secured:
+            contentSecurityRef:
+              name: transaction-approval-content-security
+        {{ range .Values.microgateway.unsecuredPaths }}
+        - pathPrefix: {{ . }}
+          unsecured: { }
+        {{ end }}
+        - pathPrefix: /
+          secured:
+            contentSecurityRef:
+              name: unspecified-path-content-security
+      upstream:
+        tls:
+          enable: true
+      downstream:
+        tls:
+          enable: true
+          secretRef:
+            name: {{ .Values.microgateway.certificate.secretName }}
+
+{{ end }}
