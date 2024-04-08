@@ -1,0 +1,83 @@
+## @section Airlock IAM parameters
+
+## @param enableMicrogatewayProtection: True if Airlock Microgateway protection should be enabled.
+## Further configuration for Microgateway can be found in the dependency 'airlock-iam-microgateway-templates'
+##
+enableMicrogatewayProtection: true
+
+## Image Options
+image:
+  ## @param image.repository: Repository to retrieve the Airlock IAM image from.
+  ##
+  repository: hub.docker.com/repository/docker/ergon/airlock-iam
+  ## @param image.tag: Tag that uniquely identifies the image.
+  ##
+  tag: "8.2"
+  ## @param image.pullPolicy: When to pull the image.
+  ##
+  pullPolicy: IfNotPresent
+
+## @param env: Environment variables passed into the Airlock IAM container.
+## This allows overriding any options defined in the instance properties, as well as to adjust Java settings.
+##
+env: { }
+
+## @section Kubernetes Parameters
+
+## @param namespace: The namespace under which Airlock IAM will be deployed.
+##
+namespace: airlock-iam
+## @param podName: Name of the Airlock IAM pod.
+##
+podName: iam
+## @param serviceName: Name of the service that exposes Airlock IAM.
+##
+serviceName: iam
+
+## @param annotations: Annotations that are added to the Airlock IAM Pod.
+##
+annotations: { }
+## @param additionalSpec: Additional spec values that are added to the Airlock IAM Pod.
+##
+additionalSpec: { }
+## @param resourceOptions: CPU and Memory request and limit for the IAM pod.
+##
+resourceOptions: { }
+
+## @param restartPolicy: Restart policy for the Airlock IAM deployment.
+##
+restartPolicy: Always
+## @param service.type: Type of the service that exposes IAM.
+## @param service.annotations: Annotations that are added to the Airlock IAM Service.
+##
+service:
+  type: NodePort
+  annotations: { }
+
+global:
+  ## @param global.iamPodLabels: The labels set on the iam pod.
+  ##
+  iamPodLabels:
+    app: iam
+  ## @param global.instanceName: What name the IAM instance should have.
+  ## This is reflected in the module path, e.g. "/<instanceName>-admin/"
+  ##
+  instanceName: auth
+  ## @param global.modules: The selected modules will be activated in IAM, as well as exposed and
+  ## protected by Airlock Microgateway (when enableMicrogatewayProtection is set to true).
+  ##
+  modules: ['adminapp', 'loginapp', 'transaction-approval', 'service-container']
+  ## @param global.iamHttpsPort: The port, on which Airlock IAM endpoints are exposed. The default is 8443.
+  ## Must be unique among iamHttpsPort, metricsPort and healthPort. Must be set.
+  ##
+  iamHttpsPort: 8443
+  ## @param global.metricsPort: The port, on which metrics endpoints are exposed.
+  ## This port will be exposed unprotected and access must be controlled with network policies.
+  ## Must be unique among iamHttpsPort, metricsPort and healthPort.
+  ##
+  metricsPort: false
+  ## @param global.healthPort: The port, on which health endpoints are exposed.
+  ## This port will be exposed unprotected and access must be controlled with network policies.
+  ## Must be unique among iamHttpsPort, metricsPort and healthPort.
+  ##
+  healthPort: false
