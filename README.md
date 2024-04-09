@@ -25,7 +25,7 @@ Documentation on Airlock IAM may be found at **[docs.airlock.com](https://docs.a
 
 For setting up Airlock Microgateway 4.0 and above, please check the following repository:
 
-* [Airlock Microgateway on Github](https://github.com/airlock/microgateway)
+* [Airlock Microgateway on Github](https://github.com/airlock/iam-microgateway-template-charts)
 
 # Installation Guide
 
