@@ -29,13 +29,13 @@ For setting up Airlock Microgateway 4.0 and above, please check the following re
 
 # Installation Guide
 
-The instructions below provide a short guide on how to set up Airlock IAM with Airlock Microgateway 4.0 and above.
+The instructions below provide a short guide on how to set up Airlock IAM with Airlock Microgateway 4.X.
 
 ## Prerequisites
 
-* Kubernetes (tested with 1.28)
-* Helm (tested with 3.13)
-* Microgateway 4.0+ Deployment
+* Kubernetes
+* Helm
+* Microgateway 4.X
 
 In addition, a valid Airlock IAM license is required to make use of its features. Once it is deployed, the license can be entered directly in the Admin UI.
 
