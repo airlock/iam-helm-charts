@@ -52,6 +52,7 @@ restartPolicy: Always
 ##
 service:
   type: NodePort
+  externalTrafficPolicy: false
   annotations: { }
 
 global:
