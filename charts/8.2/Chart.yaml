@@ -15,10 +15,10 @@ name: airlock-iam
 icon: https://raw.githubusercontent.com/airlock/iam-helm-charts/main/media/Airlock_IAM_Icon.svg
 sources:
   - https://github.com/airlock/iam-helm-charts
-version: 0.2.0
+version: 0.2.1
 dependencies:
   - name: airlock-iam-microgateway-templates
-    version: 0.2.0
+    version: 0.2.1
     repository: https://github.com/airlock/iam-microgateway-template-charts
     condition: enableMicrogatewayProtection
     alias: microgateway

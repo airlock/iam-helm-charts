@@ -13,6 +13,9 @@ spec:
   selector:
 {{ toYaml .Values.global.iamPodLabels  | indent 4 }}
   type: {{ quote .Values.service.type }}
+{{- if .Values.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ quote .Values.service.externalTrafficPolicy }}
+{{- end }}
   ports:
     - port: {{ .Values.global.iamHttpsPort }}
       protocol: TCP

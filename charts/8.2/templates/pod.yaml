@@ -3,16 +3,16 @@ kind: Pod
 metadata:
   name: {{ quote .Values.podName }}
   namespace: {{ quote .Values.namespace }}
+{{- if or .Values.global.iamPodLabels .Values.enableMicrogatewayProtection }}
   labels:
 {{ toYaml .Values.global.iamPodLabels  | indent 4 }}
-{{- if or .Values.enableMicrogatewayProtection .Values.annotations }}
-  annotations:
-{{- if .Values.annotations }}
-{{ toYaml .Values.annotations | indent 4 }}
-{{- end }}
 {{- if .Values.enableMicrogatewayProtection }}
     sidecar.microgateway.airlock.com/inject: "true"
 {{- end }}
+{{- end }}
+{{- if .Values.annotations }}
+  annotations:
+{{ toYaml .Values.annotations | indent 4 }}
 {{- end }}
 spec:
 {{- if .Values.additionalSpec }}
