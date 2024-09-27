@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ quote .Values.serviceName }}
+  namespace: {{ quote .Values.namespace }}
+  labels:
+{{ toYaml .Values.global.iamPodLabels  | indent 4 }}
+{{- if .Values.service.annotations }}
+  annotations:
+{{ toYaml .Values.service.annotations | indent 4 }}
+{{- end }}
+spec:
+  selector:
+{{ toYaml .Values.global.iamPodLabels  | indent 4 }}
+  type: {{ quote .Values.service.type }}
+{{- if .Values.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ quote .Values.service.externalTrafficPolicy }}
+{{- end }}
+  ports:
+    - port: {{ .Values.global.iamHttpsPort }}
+      protocol: TCP
+      targetPort: iam-https-port
