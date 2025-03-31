@@ -1,0 +1,24 @@
+apiVersion: v2
+appVersion: "8.4"
+description: A minimal Helm chart for Airlock IAM. This chart is not production ready and is only intended for demonstrations.
+home: https://www.airlock.com/
+keywords:
+  - Airlock IAM
+  - Ergon Informatik AG
+  - security
+  - identity and access management
+  - Airlock Microgateway
+maintainers:
+  - name: Airlock
+    url: https://www.airlock.com/
+name: iam
+icon: https://raw.githubusercontent.com/airlock/iam-helm-charts/main/media/Airlock_IAM_Icon.svg
+sources:
+  - https://github.com/airlock/iam-helm-charts
+version: 0.6.0
+dependencies:
+  - name: iam-microgateway-templates
+    version: 0.6.0
+    repository: https://github.com/airlock/iam-microgateway-template-charts
+    condition: enableMicrogatewayProtection
+    alias: microgateway
