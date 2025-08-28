@@ -6,7 +6,7 @@
 <img alt="Airlock IAM" src="https://raw.githubusercontent.com/airlock/iam-helm-charts/main/media/Airlock_IAM_Icon.svg" align="left" width="120">
 </picture>
 
-This repository contains Helm charts to set up Airlock IAM in combination with Airlock Microgateway 4.0 and above.
+This repository contains a demo version of Helm charts to set up a simple instance of Airlock IAM. These Helm charts are intended for demo purposes only and to be used in conjunction with the production-grade Helm charts for the Airlock Microgateway (https://github.com/airlock/iam-microgateway-template-charts/tree/main). 
 
 For more information, please refer to the READMEs in the respective IAM version directories.
 
