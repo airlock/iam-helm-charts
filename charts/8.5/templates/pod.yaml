@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ quote .Values.podName }}
+{{- if or .Values.global.iamPodLabels .Values.enableMicrogatewayProtection }}
+  labels:
+{{ toYaml .Values.global.iamPodLabels  | indent 4 }}
+{{- if .Values.enableMicrogatewayProtection }}
+    sidecar.microgateway.airlock.com/inject: "true"
+{{- end }}
+{{- end }}
+{{- if .Values.annotations }}
+  annotations:
+{{ toYaml .Values.annotations | indent 4 }}
+{{- end }}
+spec:
+{{- if .Values.additionalSpec }}
+{{ toYaml .Values.additionalSpec | indent 2 }}
+{{- end }}
+  securityContext:
+    runAsUser: 1000
+    fsGroup: 1000
+  containers:
+    - name: iam
+      image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+      imagePullPolicy: {{ quote .Values.image.pullPolicy }}
+      ports:
+        - containerPort: {{ .Values.global.iamHttpsPort }}
+          name: iam-https-port
+      volumeMounts:
+        - mountPath: /home/airlock/work
+          name: iam-workspace
+{{- range .Values.additionalVolumes }}
+        - name: {{ .name }}
+          mountPath: {{ .mountPath }}
+{{- end }}
+      env:
+      {{- range $name, $value := .Values.env }}
+        - name: {{ quote $name }}
+          value: {{ quote $value }}
+      {{- end }}
+        - name: IAM_ADMINAPP_URL_PATH
+          value: {{ .Values.global.path.adminapp }}
+        - name: IAM_LOGINAPP_URL_PATH
+          value: {{ .Values.global.path.loginapp }}
+        - name: IAM_TRANSACTION_APPROVAL_URL_PATH
+          value: {{ .Values.global.path.transactionApproval }}
+        - name: IAM_API_POLICY_SERVICE_URL_PATH
+          value: {{ .Values.global.path.apiPolicyService }}
+        - name: IAM_SERVICE_CONTAINER_URL_PATH
+          value: {{ .Values.global.path.serviceContainer }}
+      {{- if not .Values.env.IAM_MODULES }}
+        - name: IAM_MODULES
+          value: "{{ range $index, $element := .Values.global.modules}}{{if $index}},{{end}}{{$element}}{{end}}"
+      {{- end }}
+      {{- if not .Values.env.IAM_WEB_SERVER_HTTPS_PORT }}
+        - name: IAM_WEB_SERVER_HTTPS_PORT
+          value: {{ quote .Values.global.iamHttpsPort }}
+      {{- end }}
+      {{- if and (not .Values.env.IAM_METRICS_PORT) .Values.global.metricsPort }}
+        - name: IAM_METRICS_PORT
+          value: {{ quote .Values.global.metricsPort }}
+      {{- end }}
+      {{- if and (not .Values.env.IAM_HEALTH_PORT) .Values.global.healthPort }}
+        - name: IAM_HEALTH_PORT
+          value: {{ quote .Values.global.healthPort }}
+      {{- end }}
+{{- if .Values.resourceOptions }}
+      resources:
+{{ toYaml .Values.resourceOptions | indent 8 }}
+{{- end }}
+  restartPolicy: {{ quote .Values.restartPolicy }}
+  volumes:
+    - name: iam-workspace
+      emptyDir: { }
+{{- range .Values.additionalVolumes }}
+    - name: {{ .name }}
+{{- $volumeSpec := omit . "name" "mountPath" }}
+{{ toYaml $volumeSpec | nindent 6 }}
+{{- end }}
+
+
