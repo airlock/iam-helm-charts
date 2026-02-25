@@ -24,6 +24,7 @@ spec:
     - name: iam
       image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
       imagePullPolicy: {{ quote .Values.image.pullPolicy }}
+      # TODO ALIAM-21888: Option for read-only root filesystem.
       ports:
         - containerPort: {{ .Values.global.iamHttpsPort }}
           name: iam-https-port
