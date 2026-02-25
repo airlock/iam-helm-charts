@@ -55,7 +55,7 @@ service:
 global:
   ## @param global.microgatewayVersion: The Airlock Microgateway version this template is adapted for.
   ## Can be used to enable backwards-compatibility with older versions of Airlock Microgateway
-  microgatewayVersion: '4.5'
+  microgatewayVersion: '4.8'
   ## @param global.iamPodLabels: The labels set on the iam pod.
   ##
   iamPodLabels:
