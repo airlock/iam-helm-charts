@@ -16,6 +16,7 @@ spec:
   externalTrafficPolicy: {{ quote .Values.service.externalTrafficPolicy }}
 {{- end }}
   ports:
-    - port: {{ .Values.global.iamHttpsPort }}
-      protocol: TCP
-      targetPort: iam-https-port
+  - name: https
+    port: {{ .Values.global.iamHttpsPort }}
+    protocol: TCP
+    targetPort: iam-https-port

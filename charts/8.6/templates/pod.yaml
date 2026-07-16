@@ -1,11 +1,13 @@
+{{- $podLabels := .Values.global.iamPodLabels }}
+{{- $hasSidecarMicrogateway := and .Values.enableMicrogatewayProtection .Values.global.microgatewaySidecarMode }}
 apiVersion: v1
 kind: Pod
 metadata:
   name: {{ quote .Values.podName }}
-{{- if or .Values.global.iamPodLabels .Values.enableMicrogatewayProtection }}
+{{- if or $podLabels $hasSidecarMicrogateway }}
   labels:
-{{ toYaml .Values.global.iamPodLabels  | indent 4 }}
-{{- if .Values.enableMicrogatewayProtection }}
+{{ toYaml $podLabels | nindent 4 }}
+{{- if $hasSidecarMicrogateway }}
     sidecar.microgateway.airlock.com/inject: "true"
 {{- end }}
 {{- end }}
@@ -24,7 +26,6 @@ spec:
     - name: iam
       image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
       imagePullPolicy: {{ quote .Values.image.pullPolicy }}
-      # TODO ALIAM-21888: Option for read-only root filesystem.
       ports:
         - containerPort: {{ .Values.global.iamHttpsPort }}
           name: iam-https-port

@@ -1,104 +1,180 @@
-## @section Airlock IAM parameters
+## @section Airlock IAM Demo Chart parameters
 
-## @param enableMicrogatewayProtection: True if Airlock Microgateway protection should be enabled.
-## Further configuration for Microgateway can be found in the dependency 'airlock-iam-microgateway-templates'
+## @param enableMicrogatewayProtection Enable or disable the iam-microgateway-templates subchart dependency.
+## When true, the subchart is deployed alongside IAM to provide WAF protection via Airlock Microgateway.
+## This value is used as the dependency condition in Chart.yaml.
 ##
 enableMicrogatewayProtection: true
 
-## Image Options
+## @section Airlock IAM Parameters
+##
+
+## @param image Airlock IAM Container Image parameters
+##
 image:
-  ## @param image.repository: Repository to retrieve the Airlock IAM image from.
+  ## @param image.repository Container image repository for Airlock IAM.
   ##
   repository: hub.docker.com/repository/docker/ergon/airlock-iam
-  ## @param image.tag: Tag that uniquely identifies the image.
+
+  ## @param image.tag Tag that uniquely identifies the image.
   ##
   tag: "8.6"
-  ## @param image.pullPolicy: When to pull the image.
+
+  ## @param image.pullPolicy Kubernetes image pull policy.
   ##
   pullPolicy: IfNotPresent
 
-## @param env: Environment variables passed into the Airlock IAM container.
-## This allows overriding any options defined in the instance properties, as well as to adjust Java settings.
-## It is possible to set a direct value or to use valueFrom (for secrets or configmaps).
+## @param env: Map of additional environment variables passed into the Airlock IAM container.
+## Use to override any IAM instance properties or to adjust JVM settings (e.g. JAVA_OPTS).
+## Supports scalar values and map values (e.g. for valueFrom with secretKeyRef/configMapKeyRef).
+## The following keys, if present, override the values auto-generated from global.*:
+## - IAM_MODULES: overrides the comma-separated module list derived from global.modules
+## - IAM_WEB_SERVER_HTTPS_PORT: overrides the value derived from global.iamHttpsPort
+## - IAM_METRICS_PORT: overrides the value derived from global.metricsPort
+## - IAM_HEALTH_PORT: overrides the value derived from global.healthPort
 ## Example:
-## env:
-##   MY_VAR: "my-value"
-##   SECRET_VAR:
-##     valueFrom:
-##       secretKeyRef:
-##         name: my-secret
-##         key: my-key
+##   env:
+##     JAVA_OPTS: "-Xmx512m"
+##     MY_SECRET:
+##       valueFrom:
+##         secretKeyRef:
+##           name: my-secret
+##           key: value
 ##
 env: { }
 
-## @section Kubernetes Parameters
-
-## @param podName: Name of the Airlock IAM pod.
+## @param podName Name of the IAM Pod resource.
 ##
 podName: iam
-## @param serviceName: Name of the service that exposes Airlock IAM.
+
+## @param serviceName Name of the IAM Service resource.
+## Note: This should match gatewayApi.targetService.name in the Microgateway chart.
 ##
 serviceName: iam
 
-## @param annotations: Annotations that are added to the Airlock IAM Pod.
+## @param annotations Additional annotations to add to the IAM pod metadata.
+## Example:
+##   annotations:
+##     prometheus.io/scrape: "true"
 ##
 annotations: { }
-## @param additionalSpec: Additional spec values that are added to the Airlock IAM Pod.
+
+## @param additionalSpec Additional fields to merge verbatim into the pod spec.
+## Use to set fields not exposed by other parameters, such as imagePullSecrets, nodeSelector, affinity, etc.
+## Example:
+##   additionalSpec:
+##     imagePullSecrets:
+##       - name: my-registry-secret
 ##
 additionalSpec: { }
-## @param additionalVolumes: Additional volumes that are added to the Airlock IAM Pod. Each entry must contain at least name and mountPath.
+
+## @param additionalVolumes List of additional volumes to mount into the IAM container.
+## Each entry must contain name and mountPath. All other fields are used as the volume source spec
+## (e.g. secret, configMap, persistentVolumeClaim).
+## Example:
+##   additionalVolumes:
+##     - name: iam-license
+##       mountPath: /home/airlock/iam/license.txt
+##       secret:
+##         secretName: iam-license
 ##
 additionalVolumes: [ ]
-## @param resourceOptions: CPU and Memory request and limit for the IAM pod.
+
+## @param resourceOptions CPU and memory resource requests and limits for the IAM container.
+## Follows the standard Kubernetes ResourceRequirements structure.
 ##
 resourceOptions: { }
 
-## @param restartPolicy: Restart policy for the Airlock IAM deployment.
+## @param restartPolicy Restart policy for the IAM pod.
 ##
 restartPolicy: Always
-## @param service.type: Type of the service that exposes IAM.
-## @param service.annotations: Annotations that are added to the Airlock IAM Service.
-##
+
+## @param service Parameters for the Airlock IAM service.
 service:
-  type: NodePort
+  ## @param service.type Kubernetes Service type for the IAM service.
+  ##
+  type: ClusterIP
+
+  ## @param service.externalTrafficPolicy External traffic policy for the service, or false to omit the field.
+  ## Only applicable for NodePort and LoadBalancer service types.
+  ##
   externalTrafficPolicy: false
+
+  ## @param service.annotations Additional annotations to add to the Service metadata.
+  ##
   annotations: { }
 
+
+## @section Global Parameters
+## Global settings shared with the IAM demo helm chart.
+##
+
+## @param global Parameters shared between IAM and Microgateway
 global:
-  ## @param global.microgatewayVersion: The Airlock Microgateway version this template is adapted for.
-  ## Can be used to enable backwards-compatibility with older versions of Airlock Microgateway
+  ## @param global.microgatewayVersion The Airlock Microgateway version this template is adapted for.
+  ## Used for gating certain features that are not supported with older versions of Microgateway.
+  ##
   microgatewayVersion: '4.8'
-  ## @param global.iamPodLabels: The labels set on the iam pod.
+
+  ## @param global.microgatewaySidecarMode Airlock Microgateway deployment mode selector.
+  ## true  - Sidecar mode: The Microgateway engine is injected as a sidecar container into appropriately labeled IAM pods.
+  ## false - Gateway API mode: The Microgateway engine runs as a separate pod and service, and acts as a proper gateway.
+  ##
+  microgatewaySidecarMode: false
+
+  ## @param global.iamPodLabels Expand this with additional labels to set on the IAM pod.
   ##
   iamPodLabels:
+    ## @param global.iamPodLabels.app Used to identify the IAM pod for sidecar injection.
+    ##
     app: iam
-  ## @param global.instanceName: What name the IAM instance should have.
-  ##
-  instanceName: auth
-  ## @param global.modules: The selected modules will be activated in IAM, as well as exposed and
-  ## protected by Airlock Microgateway (when enableMicrogatewayProtection is set to true).
+
+  ## @param global.modules List of IAM application modules to activate and protect via Airlock Microgateway.
+  ## Only modules present in this list will have routes created.
   ##
   modules: ['adminapp', 'loginapp', 'transaction-approval', 'service-container']
-  ## @param global.path: Defines the path under which each module can be accessed.
-  ## The paths are applied to the IAM instance properties "iam.*.url.path", as well as the SidecarGateway path prefixes.
+
+  ## @param global.path URL base path under which each module is accessible.
+  ## These values are applied to the IAM instance properties (iam.*.url.path) as well as the
+  ## SidecarGateway and HTTPRoute path prefix definitions.
   ##
   path:
+    ## @param global.path.adminapp Base path for the Admin UI and its REST API (/rest, /editConfig sub-paths).
+    ##
     adminapp: /auth-admin
+
+    ## @param global.path.loginapp Base path for the Login UI and its REST API (public, protected, and OAuth2 endpoints).
+    ##
     loginapp: /auth-login
+
+    ## @param global.path.transactionApproval Base path for the Transaction Approval module REST API.
+    ##
     transactionApproval: /auth-transaction-approval
+
+    ## @param global.path.apiPolicyService Base path for the API Policy Service.
+    ##
     apiPolicyService: /auth-api-policy-service
+
+    ## @param global.path.serviceContainer Base path for the Service Container module.
+    ##
     serviceContainer: /auth-servicecontainer
-  ## @param global.iamHttpsPort: The port, on which Airlock IAM endpoints are exposed. The default is 8443.
-  ## Must be unique among iamHttpsPort, metricsPort and healthPort. Must be set.
+
+  ## @param global.iamHttpsPort Port on which Airlock IAM endpoints are exposed.
+  ## Must be unique among iamHttpsPort, metricsPort, and healthPort.
   ##
   iamHttpsPort: 8443
-  ## @param global.metricsPort: The port, on which metrics endpoints are exposed.
+
+  ## @param global.metricsPort Port on which Prometheus metrics endpoints are exposed.
   ## This port will be exposed unprotected and access must be controlled with network policies.
-  ## Must be unique among iamHttpsPort, metricsPort and healthPort.
+  ## Must be unique among iamHttpsPort, metricsPort, and healthPort.
+  ## Set to 'false' to disable.
   ##
   metricsPort: false
-  ## @param global.healthPort: The port, on which health endpoints are exposed.
-  ## This port will be exposed unprotected and access must be controlled with network policies.
-  ## Must be unique among iamHttpsPort, metricsPort and healthPort.
+
+  ## @param global.healthPort Port on which Kubernetes liveness/readiness health check probes are exposed.
+  ## When set to a port number, an unsecured route to that port is created.
+  ## This port will be exposed unprotected — access must be controlled with network policies.
+  ## Must be unique among iamHttpsPort, metricsPort, and healthPort.
+  ## Set to 'false' to disable.
   ##
   healthPort: false
