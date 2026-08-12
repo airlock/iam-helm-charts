@@ -14,7 +14,7 @@ For more information, please refer to the READMEs in the respective IAM version 
 
 The Helm Charts contained in this repository are work in progress and will be improved over time to adopt new functionality of newer versions of Airlock Microgateway.
 
-In their current state, they serve to demonstrate how Airlock Microgateway 4.0 and above can be used to protect Airlock IAM,
+In their current state, they serve to demonstrate how Airlock Microgateway can be used to protect Airlock IAM,
 and may be used as a base for your extensions.
 
 The Helm Charts provided for Airlock IAM are only suitable for demonstration purposes.
@@ -23,19 +23,19 @@ The Helm Charts provided for Airlock IAM are only suitable for demonstration pur
 
 Documentation on Airlock IAM may be found at **[docs.airlock.com](https://docs.airlock.com/iam/latest/)** or the product website at **[Airlock Identity and Access Management](https://www.airlock.com/en/secure-access-hub/components/iam)**.
 
-For setting up Airlock Microgateway 4.0 and above, please check the following repository:
+For setting up Airlock Microgateway, please check the following repository:
 
 * [Airlock Microgateway on Github](https://github.com/airlock/iam-microgateway-template-charts)
 
 # Installation Guide
 
-The instructions below provide a short guide on how to set up Airlock IAM with Airlock Microgateway 4.X.
+The instructions below provide a short guide on how to set up Airlock IAM with Airlock Microgateway.
 
 ## Prerequisites
 
 * Kubernetes
 * Helm
-* Microgateway 4.X
+* Microgateway
 
 In addition, a valid Airlock IAM license is required to make use of its features. Once it is deployed, the license can be entered directly in the Admin UI.
 
